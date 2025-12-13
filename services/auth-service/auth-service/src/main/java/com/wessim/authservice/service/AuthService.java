@@ -34,4 +34,12 @@ public class AuthService {
     public boolean checkPassword(String rawPassword, String storedHash) {
         return new BCryptPasswordEncoder().matches(rawPassword, storedHash);
     }
+
+    public boolean deleteUserById(int id) {
+        if (userRepo.existsById(id)) {
+            userRepo.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }

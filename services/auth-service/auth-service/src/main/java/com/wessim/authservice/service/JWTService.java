@@ -94,4 +94,10 @@ public class JWTService {
     public String  extractEmailFromToken(String token){
         return extractUsername(token.substring(7));
     }
+
+    public boolean isAdmin(String token) {
+        Claims claims = extractAllClaims(token);
+        String role = (String) claims.get("role");
+        return "ADMIN".equals(role);
+    }
 }
