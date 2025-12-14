@@ -83,6 +83,11 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/ping")
+    public ResponseEntity<Map<String, Object>> ping() {
+        return ResponseEntity.ok(Map.of("message", "Auth service is running"));
+    }
+
 
 
 }
