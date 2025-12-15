@@ -37,6 +37,9 @@ public class User implements UserDetails {
     @Column(name = "role", nullable = false)
     private Role role;
 
+    @Column(name = "active_status", nullable = false)
+    private boolean activeStatus;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 

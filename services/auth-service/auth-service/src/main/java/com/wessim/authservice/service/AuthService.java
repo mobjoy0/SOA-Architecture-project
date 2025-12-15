@@ -19,6 +19,8 @@ public class AuthService {
         user.setEmail(email);
         user.setPasswordHash(new BCryptPasswordEncoder().encode(password));
         user.setRole(role);
+        user.setActiveStatus(false);
+
         System.out.println("Registering user: " + username + ", email: " + email + ", role: " + role);
         return userRepo.save(user);
     }

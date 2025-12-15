@@ -33,8 +33,6 @@ public class AuthController {
 
         Map<String, Object> response = new HashMap<>();
         response.put("id", user.getId());
-        response.put("username", user.getUsername());
-        response.put("email", user.getEmail());
 
         return ResponseEntity.ok(response);
     }
