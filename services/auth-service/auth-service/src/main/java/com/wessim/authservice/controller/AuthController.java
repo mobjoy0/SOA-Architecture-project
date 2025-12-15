@@ -7,6 +7,7 @@ import com.wessim.authservice.service.AuthService;
 import com.wessim.authservice.service.JWTService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -48,7 +49,7 @@ public class AuthController {
             Map<String, Object> extraClaims = new HashMap<>();
             extraClaims.put("role", user.getRole().name());
             extraClaims.put("id", user.getId());
-            extraClaims.put("email", user.getEmail());
+            extraClaims.put("active_status", user.isActiveStatus());
 
             UserDetails userDetails = org.springframework.security.core.userdetails.User
                     .withUsername(user.getUsername())
@@ -84,6 +85,32 @@ public class AuthController {
     @GetMapping("/ping")
     public ResponseEntity<Map<String, Object>> ping() {
         return ResponseEntity.ok(Map.of("message", "Auth service is running"));
+    }
+
+    @PutMapping("/pay")
+    public ResponseEntity<Map<String, Object>> pay(
+            @RequestHeader("Authorization") String token,
+            @RequestHeader("X-Billing-Service-Key") String serviceKey) {
+
+        if (!serviceKey.equals("pay")){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Access denied"));
+        }
+
+        if (token == null || token.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Missing token"));
+        }
+
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        Pair<Boolean, String> result = authService.updatePaymentStatus(jwtService.extractId(token));
+
+        if (!result.getFirst()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", result.getSecond()));
+        }
+
+        return ResponseEntity.ok(Map.of("message", result.getSecond()));
     }
 
 

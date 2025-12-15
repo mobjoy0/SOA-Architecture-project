@@ -52,4 +52,5 @@ public class User implements UserDetails {
     public @Nullable String getPassword() {
         return passwordHash;
     }
+    
 }

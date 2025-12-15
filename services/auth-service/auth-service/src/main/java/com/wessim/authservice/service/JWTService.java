@@ -60,6 +60,11 @@ public class JWTService {
                 .getBody();
     }
 
+    public Integer extractId(String token) {
+        Claims claims = extractAllClaims(token);
+        return (Integer) claims.get("id");
+    }
+
     private Key getSignInKey() {
         byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);

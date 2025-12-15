@@ -4,8 +4,11 @@ import com.wessim.authservice.entity.Role;
 import com.wessim.authservice.entity.User;
 import com.wessim.authservice.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 public class AuthService {
@@ -26,11 +29,7 @@ public class AuthService {
     }
 
     public User login(String username) {
-        User user = userRepo.findByUsername(username);
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
-        return user;
+        return userRepo.findByUsername(username);
     }
 
     public boolean checkPassword(String rawPassword, String storedHash) {
@@ -44,4 +43,22 @@ public class AuthService {
         }
         return false;
     }
+
+    public Pair<Boolean, String> updatePaymentStatus(Integer id) {
+        User user = userRepo.findById(id).orElse(null);
+
+        if (user == null) {
+            return Pair.of(false, "User not found");
+        }
+
+        if (user.isActiveStatus()) {
+            return Pair.of(false, "Payment already done");
+        }
+
+        user.setActiveStatus(true);
+        userRepo.save(user);
+
+        return Pair.of(true, "Payment processed successfully");
+    }
+
 }
