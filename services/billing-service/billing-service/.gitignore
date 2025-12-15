@@ -1,0 +1,70 @@
+﻿# Visual Studio / Rider / IDE stuff
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / JetBrains
+.idea/
+*.iml
+
+# Build results
+bin/
+obj/
+out/
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+# ASP.NET Core
+wwwroot/lib/
+wwwroot/node_modules/
+appsettings.Development.json
+
+# Logs
+*.log
+logs/
+*.vspscc
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# JetBrains Rider caches
+.idea/
+*.sln.iml
+
+# Temporary files
+*.tmp
+*.temp
+
+# Backup files
+*~
+*.bak
+
+# Test results
+TestResults/
+*.trx
+
+# Coverage
+coverage/
+*.coverage
+*.coveragexml
+
+# Publish folder
+publish/
+
+# CoreWCF / WCF generated files
+*.svcinfo
+*.xsd
+*.wsdl
+
+# Others
+*.swp
+
+billing.db
