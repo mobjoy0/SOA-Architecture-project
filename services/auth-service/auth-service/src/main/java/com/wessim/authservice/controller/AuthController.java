@@ -73,6 +73,7 @@ public class AuthController {
         if (!jwtService.isAdmin(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Access denied"));
         }
+        System.out.println("deleting user " + id);
         boolean deleted = authService.deleteUserById(id);
 
         if (deleted) {

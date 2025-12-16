@@ -79,6 +79,8 @@ public class JWTService {
     }
 
     public boolean isAdmin(String token) {
+        System.out.println("checking admin");
+        token = token.replace("Bearer ", "");
         Claims claims = extractAllClaims(token);
         String role = (String) claims.get("role");
         return "ADMIN".equals(role);
