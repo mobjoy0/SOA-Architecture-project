@@ -5,7 +5,6 @@ DB_NAME = "../courses.db"
 
 
 def init_db():
-    """Initialize the database and create tables if they don't exist."""
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
 
@@ -25,7 +24,6 @@ def init_db():
 
 
 def add_course(user_id, filename, file_path, subject):
-    """Add a course file record to the database."""
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
 
@@ -42,7 +40,6 @@ def add_course(user_id, filename, file_path, subject):
 
 
 def get_course_by_filename(filename):
-    """Get course record by filename."""
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
@@ -55,7 +52,6 @@ def get_course_by_filename(filename):
 
 
 def get_all_courses():
-    """Get all course records."""
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
@@ -68,7 +64,6 @@ def get_all_courses():
 
 
 def get_courses_by_subject(subject):
-    """Get all courses for a specific subject."""
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()

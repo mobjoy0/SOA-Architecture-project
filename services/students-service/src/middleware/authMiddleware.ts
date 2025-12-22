@@ -1,12 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
-// Use environment variable with fallback (only for development)
-const JWT_SECRET = process.env.JWT_SECRET || "klrjklgerjhklbhjkesfjytdfsbhgdfbhjvdnjhdgfjhvbnwdgvbng";
+const JWT_SECRET = "klrjklgerjhklbhjkesfjytdfsbhgdfbhjvdnjhdgfjhvbnwdgvbng";
 
-if (!process.env.JWT_SECRET) {
-    console.warn("WARNING: JWT_SECRET not set in environment variables. Using default (unsafe for production)");
-}
 
 interface CustomJWTPayload extends JwtPayload {
     id: number;

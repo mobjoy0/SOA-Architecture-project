@@ -15,8 +15,8 @@ import (
 var jwtSecret []byte
 
 func init() {
-	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found, using environment variables")
+	if err := godotenv.Load("../../.env"); err != nil {
+		log.Println("No .env file found, using environment variables for jwt")
 	}
 
 	jwtSecret = []byte(os.Getenv("jwt.secret"))
@@ -73,11 +73,10 @@ func JWTAuthAdmin(next http.Handler) http.Handler {
 		if claims, ok := token.Claims.(jwt.MapClaims); ok {
 			role, okRole := claims["role"].(string)
 			idFloat, okID := claims["id"].(float64)
-			email, okEmail := claims["email"].(string)
 
-			log.Printf("Claims: role=%v, id=%v, email=%v", role, idFloat, email)
+			log.Printf("Claims: role=%v, id=%v, email=%v", role, idFloat)
 
-			if !okRole || !okID || !okEmail {
+			if !okRole || !okID {
 				http.Error(w, "Invalid token claims", http.StatusUnauthorized)
 				return
 			}
@@ -88,9 +87,8 @@ func JWTAuthAdmin(next http.Handler) http.Handler {
 			}
 
 			user := UserClaims{
-				ID:    int64(idFloat),
-				Email: email,
-				Role:  role,
+				ID:   int64(idFloat),
+				Role: role,
 			}
 
 			ctx := context.WithValue(r.Context(), userContextKey, user)

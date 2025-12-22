@@ -13,11 +13,11 @@ import (
 
 func main() {
 	// Load .env first
-	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found, using environment variables")
+	if err := godotenv.Load("../../.env"); err != nil {
+		log.Println("No .env file found, using environment variables for main")
 	}
 
-	db := database.Connect("database/notes.db")
+	db := database.Connect("../../database/notes.db")
 	defer db.Close()
 
 	database.InitSchema(db)

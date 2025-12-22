@@ -8,14 +8,12 @@ interface AuthUserResponse {
     password?: string;
 }
 
-// Helper function to get headers with token
 const getAuthHeaders = (token?: string) => {
     const headers: any = {
         "Content-Type": "application/json"
     };
 
     if (token) {
-        // Ensure no extra spaces in the token
         headers["Authorization"] = `Bearer ${token.trim()}`;
     }
 

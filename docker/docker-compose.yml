@@ -1,0 +1,66 @@
+version: "3.9"
+
+services:
+  gateway:
+    image: gateway-image   # replace with your built Spring Boot Gateway image
+    container_name: gateway
+    build:
+      context: ../service/gateway   # path to your Spring Cloud Gateway project
+    ports:
+      - "8888:8888"
+    depends_on:
+      - auth-service
+      - students-service
+      - notes-service
+      - course-rest
+      - course-soap
+      - billing-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CLOUD_GATEWAY_ROUTES_0_URI: http://auth-service:5048
+      SPRING_CLOUD_GATEWAY_ROUTES_1_URI: http://students-service:5049
+      SPRING_CLOUD_GATEWAY_ROUTES_2_URI: http://notes-service:5050
+      SPRING_CLOUD_GATEWAY_ROUTES_3_URI: http://course-rest:5051
+      SPRING_CLOUD_GATEWAY_ROUTES_4_URI: http://course-soap:5052
+      SPRING_CLOUD_GATEWAY_ROUTES_5_URI: http://billing-service:5185
+
+  auth-service:
+    image: auth-service-image
+    container_name: auth-service
+    build:
+      context: ../service/auth-service
+    ports:
+      - "5048:5048"
+
+  students-service:
+    image: students-service-image
+    container_name: students-service
+    build:
+      context: ../service/students-service
+    ports:
+      - "5049:5049"
+
+  notes-service:
+    image: notes-service-image
+    container_name: notes-service
+    build:
+      context: ../service/notes-service
+    ports:
+      - "5050:5050"
+
+
+  course-soap:
+    image: course-image
+    container_name: cours
+    build:
+      context: ../service/course-service
+    ports:
+      - "5052:5052"
+
+  billing-service:
+    image: billing-service-image
+    container_name: billing-service
+    build:
+      context: ../service/billing-service
+    ports:
+      - "5185:5185"

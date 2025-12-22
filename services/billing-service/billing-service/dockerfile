@@ -1,0 +1,31 @@
+# =========================
+# Build stage
+# =========================
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
+WORKDIR /src
+
+# Copy csproj first (better cache)
+COPY billing-service/*.csproj ./billing-service/
+RUN dotnet restore billing-service/billing-service.csproj
+
+# Copy everything
+COPY billing-service/. ./billing-service/
+
+# Publish
+WORKDIR /src/billing-service
+RUN dotnet publish -c Release -o /out
+
+# =========================
+# Runtime stage
+# =========================
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+
+WORKDIR /app
+
+COPY --from=build /out .
+
+EXPOSE 5051
+ENV ASPNETCORE_URLS=http://+:8080
+
+ENTRYPOINT ["dotnet", "billing-service.dll"]

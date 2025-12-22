@@ -45,16 +45,23 @@ func (h *NoteHandler) GetNotes(w http.ResponseWriter, r *http.Request) {
 
 // POST /notes
 func (h *NoteHandler) CreateNote(w http.ResponseWriter, r *http.Request) {
-
 	w.Header().Set("Content-Type", "application/json")
 	var note models.Note
 
 	if err := json.NewDecoder(r.Body).Decode(&note); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "Invalid JSON: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	h.repo.Create(note)
+	if note.NoteValue < 0 || note.NoteValue > 20 {
+		http.Error(w, "NoteValue must be between 0 and 20", http.StatusBadRequest)
+		return
+	}
+
+	if err := h.repo.Create(note); err != nil {
+		http.Error(w, "Failed to create note: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 	json.NewEncoder(w).Encode(note)
 }
 

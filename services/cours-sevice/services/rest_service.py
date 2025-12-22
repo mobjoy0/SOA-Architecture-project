@@ -2,18 +2,18 @@ from flask import Flask, request, jsonify, send_from_directory
 import os
 from jwt_service import verify_jwt
 from db_service import init_db, add_course, get_course_by_filename, get_all_courses, get_courses_by_subject
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 COURSE_DIR = "../courses"
 os.makedirs(COURSE_DIR, exist_ok=True)
 
-# Initialize database on startup
 init_db()
 
 ALLOWED_UPLOAD_ROLES = ["ADMIN", "PROFESSOR"]
 
 
-# --- Upload endpoint (admin or professor only) ---
 @app.route("/upload", methods=["POST"])
 def upload_course():
     auth_header = request.headers.get("Authorization")
@@ -40,7 +40,6 @@ def upload_course():
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
 
-    # Check if it's a PDF
     if not file.filename.lower().endswith('.pdf'):
         return jsonify({"error": "Only PDF files are allowed"}), 400
 
@@ -58,7 +57,6 @@ def upload_course():
     }), 201
 
 
-# --- Download endpoint (any authenticated user) ---
 @app.route("/download/<filename>", methods=["GET"])
 def download_course(filename):
     auth_header = request.headers.get("Authorization")
@@ -77,7 +75,6 @@ def download_course(filename):
     return send_from_directory(COURSE_DIR, filename, as_attachment=True)
 
 
-# --- Get all courses ---
 @app.route("/courses", methods=["GET"])
 def list_courses():
     auth_header = request.headers.get("Authorization")
@@ -100,4 +97,4 @@ def list_courses():
 
 
 if __name__ == "__main__":
-    app.run(port=5001)
+    app.run(port=5052)

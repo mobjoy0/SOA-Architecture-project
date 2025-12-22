@@ -3,7 +3,6 @@ package httpserver
 import (
 	"database/sql"
 	"mobjoy0/note-service/internal/handlers"
-	"mobjoy0/note-service/internal/middleware"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -15,7 +14,7 @@ func NewRouter(db *sql.DB) *chi.Mux {
 
 	// Routes
 	r.Route("/notes", func(r chi.Router) {
-		r.Use(middleware.JWTAuthAdmin)
+		//r.Use(middleware.JWTAuthAdmin)
 
 		r.Get("/", noteHandler.GetNotes)                                  // GET /notes?student_id=...
 		r.Post("/", noteHandler.CreateNote)                               // POST /notes

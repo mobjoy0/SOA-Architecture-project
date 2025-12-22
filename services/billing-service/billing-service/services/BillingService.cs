@@ -25,39 +25,55 @@ public class BillingService : IBillingService
     {
         try
         {
+            Console.WriteLine("PayInvoice called");
+
             var httpReq = OperationContext.Current.IncomingMessageProperties
                 [HttpRequestMessageProperty.Name] as HttpRequestMessageProperty;
 
             string authHeader = httpReq?.Headers["Authorization"];
+            Console.WriteLine($"Authorization header: {authHeader}");
+
             var userId = _jwtService.ExtractUserId(authHeader);
+            Console.WriteLine($"Extracted User ID: {userId}");
 
             if (userId == -1)
-                return "Unauthorized: no JWT provided";
-            
-            
-            if (_databaseService.GetPaymentStatus(userId))
             {
+                Console.WriteLine("Unauthorized: no valid JWT");
+                return "Unauthorized: no JWT provided";
+            }
+
+            bool paymentDone = _databaseService.GetPaymentStatus(userId);
+            Console.WriteLine($"Payment status for user {userId}: {paymentDone}");
+
+            if (paymentDone)
+            {
+                Console.WriteLine("Payment is already done");
                 return "Failed: Payment is already done";
             }
-           
+
+            Console.WriteLine("Calling Auth service Pay endpoint...");
             var authResult = CallAuthPayEndpoint(authHeader).Result;
+            Console.WriteLine($"Auth service result: {authResult}");
 
             if (authResult)
             {
-                // Add payment to database with Paid = true
                 var paymentId = _databaseService.AddPayment(userId);
+                Console.WriteLine($"Payment added to database. Payment ID: {paymentId}");
                 return $"Payment successful! Payment ID: {paymentId}, User ID: {userId}";
             }
             else
             {
+                Console.WriteLine("Payment failed at auth service");
                 return "Payment failed at auth service:";
             }
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"Exception in PayInvoice: {ex.Message}");
             return $"Error processing payment: {ex.Message}";
         }
     }
+
 
     public string GetAllPayments()
     {
@@ -88,7 +104,6 @@ public class BillingService : IBillingService
         {
             var request = new HttpRequestMessage(HttpMethod.Put, $"{AUTH_SERVICE_URL}/auth/pay");
             
-            // Forward Authorization header to auth service
             if (!string.IsNullOrEmpty(authHeader))
             {
                 if (authHeader.StartsWith("Bearer "))
@@ -97,7 +112,6 @@ public class BillingService : IBillingService
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authHeader);
             }
 
-            // Add billing service API key for verification
             request.Headers.Add("X-Billing-Service-Key", BILLING_API_KEY);
 
             var response = await _httpClient.SendAsync(request);
